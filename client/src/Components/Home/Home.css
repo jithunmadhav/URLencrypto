@@ -1,0 +1,9 @@
+.inner-div {
+    width: 900px;
+    position: absolute;
+    left: 26%;
+    top: 17%;
+    height: 600px;
+    background-color: aqua;
+    border-radius: 8px;
+}

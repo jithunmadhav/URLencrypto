@@ -1,9 +1,12 @@
 import bcrypt from 'bcrypt'
 import jwt  from 'jsonwebtoken'
+import { sentOTP } from '../Helpers/mail.js';
+import { randomNumber } from '../Helpers/randomnum.js';
 import userModel from '../Model/userSchema.js';
 export const userSignup=async(req,res)=>{
     try {
 
+        console.log(req.body);
     let {email,mobile,password,confirmpassword}=req.body;
     const oldUser=await userModel.findOne({email})
     if(oldUser){
@@ -69,8 +72,6 @@ export const resendOtp=(req,res)=>{
     let otp=randomNumber()
     console.log(otp);
            sentOTP(email,otp);
-        //    mobileOTP(mobile,otp)
-        //    mobileOTP2(mobile,otp)
             const userToken=jwt.sign({
                 otp:otp,
 
@@ -163,3 +164,36 @@ export const userLogin=async(req,res)=>{
       console.log(error);
     }
   }
+
+  export const userLogout = (req, res) => {
+    return res
+      .cookie('userToken', '', {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: 'none',
+      })
+      .cookie('signupToken', '', {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: 'none',
+      })
+      .json({ err: false, message: 'Logged out successfully' });
+  };
+  
+  export const userCheckAuth=async(req,res)=>{
+    const token = req.cookies.userToken;
+    if(token){
+    const verifyJwt= jwt.verify(token,process.env.JWT_SECRET_KEY);
+    let ID=verifyJwt.id;
+    const user=await userModel.findOne({_id:ID})
+    if(user.ban==true){
+        res.json({logged:false,err:true,message:'user banned',ban:true})
+    }else{
+        res.json({logged:true,details:user,ban:false})
+    }
+    }else{
+     res.json({logged:false,err:true,message:'No token',ban:false})
+    }
+ }

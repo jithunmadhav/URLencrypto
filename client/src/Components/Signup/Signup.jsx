@@ -11,6 +11,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../axios';
+import { useDispatch } from 'react-redux';
+import Otpverification from '../Otpverification/Otpverification';
 
 function Copyright(props) {
   return (
@@ -30,17 +33,35 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Signup() {
+    const dispatch = useDispatch()
   const [err, seterr] = React.useState('')
+  const [data, setdata] = React.useState('')
+  const [openOtp, setOpenOtp] = React.useState(false)
   const navigate=useNavigate()
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if(data.get('email').trim() && data.get('password').trim()){
+    if(data.get('email').trim() && data.get('password').trim() && data.get('name').trim() && data.get('confirmpassword').trim()){
         if(data.get('email').includes('@gmail.com')){
-            console.log({
-              email: data.get('email'),
-              password: data.get('password'),
-            });
+            if(data.get('password')===data.get('confirmpassword')){
+                let email=data.get('email'),name=data.get('name'),password=data.get('password'),confirmpassword=data.get('confirmpassword')
+                let Data={
+                  email:email,name:name,password:password,type:'signup'
+                }
+                setdata(Data)
+                axios.post('/signup',{email,name,password,confirmpassword}).then((response)=>{
+              if(!response.data.err){
+                setOpenOtp(true)
+                console.log(response.data);
+              }else{
+                seterr(response.data.message)
+              }
+              }).catch((error)=>{
+                console.log(error);
+              })
+            }else{
+                seterr('Password entered are not same')
+            }
         }else{
             seterr('Invalid email format')
         }
@@ -50,6 +71,7 @@ export default function Signup() {
   };
 
   return (
+    openOtp ? <Otpverification data={{data}}/> :
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -90,7 +112,6 @@ export default function Signup() {
               label="Name"
               name="name"
               autoComplete="name"
-              autoFocus
               aria-required
             />
             <TextField

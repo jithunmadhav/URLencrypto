@@ -15,6 +15,7 @@ export const userSignup=async(req,res)=>{
          
         if(password==confirmpassword){
            let otp=randomNumber()
+           console.log(otp);
            sentOTP(email,otp);
             const userToken=jwt.sign({
                 otp:otp,
@@ -39,31 +40,36 @@ export const userSignup=async(req,res)=>{
     }
 }
 export const verifyUserSignup=async(req,res)=>{
-    const {name,email,mobile,password}=req.body
-    let otp=req.body.OTP;
-    let userToken=req.cookies.signupToken;
-     const OtpToken = jwt.verify(userToken,process.env.JWT_SECRET_KEY)
-    let bcrypPassword=await bcrypt.hash(password,10)
-    if(otp==OtpToken.otp){
-
-        let user= await userModel.create({
-            name,
-            email,
-            mobile,
-            password:bcrypPassword
-        });
-        const userToken=jwt.sign({
-            id:user._id
-        },
-        process.env.JWT_SECRET_KEY);
-        return res.cookie("userToken", userToken, {
-            httpOnly: true,
-            secure: true,
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-            sameSite: "none",
-        }).json({ err: false ,message:'User registration success'});
-    }else{
-        res.json({err:true,message:'something went wrong'})
+    try {
+        
+        const {name,email,password}=req.body
+        let otp=req.body.OTP;
+        let userToken=req.cookies.signupToken;
+         const OtpToken = jwt.verify(userToken,process.env.JWT_SECRET_KEY)
+        let bcrypPassword=await bcrypt.hash(password,10)
+        if(otp==OtpToken.otp){
+    
+            let user= await userModel.create({
+                name,
+                email,
+                password:bcrypPassword
+            });
+            const userToken=jwt.sign({
+                id:user._id,
+                role: 'user'
+            },
+            process.env.JWT_SECRET_KEY);
+            return res.cookie("userToken", userToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                sameSite: "none",
+            }).json({ err: false ,message:'User registration success'});
+        }else{
+            res.json({err:true,message:'something went wrong'})
+        }
+    } catch (error) {
+        console.log(error);
     }
 
 }
@@ -91,6 +97,7 @@ export const forgotPassword=async(req,res)=>{
     let oldUser=await userModel.findOne({email:email})
     if(oldUser){
         let otp=randomNumber()
+        console.log(otp);
         sentOTP(email,otp)
            const userToken=jwt.sign({
                 otp:otp,
@@ -139,11 +146,11 @@ export const userLogin=async(req,res)=>{
       let {email,password}=req.body;
       let user=await userModel.findOne({email:email})
       if(user ){
-        if(user.ban==false){
             let status= await bcrypt.compare(password,user.password)
             if(status){
                 const userToken=jwt.sign({
-                    id:user._id
+                    id:user._id,
+                    role:'user'
                 },process.env.JWT_SECRET_KEY);
                 return res.cookie("userToken", userToken, {
                     httpOnly: true,
@@ -154,9 +161,7 @@ export const userLogin=async(req,res)=>{
             }else{
                 res.json({err:true,message:"Invalid email or password"})
             }
-        }else{
-            res.json({err:true,message:'User banned.'})
-        }
+         
       }else{
           res.json({err:true,message:'No user found, please signup.'})
       }

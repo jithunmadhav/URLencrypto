@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../axios';
+import { useDispatch } from 'react-redux';
 
 function Copyright(props) {
   return (
@@ -30,6 +32,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Login() {
+  const dispatch = useDispatch()
   const [err, seterr] = React.useState('')
   const navigate=useNavigate()
   const handleSubmit = (event) => {
@@ -37,10 +40,17 @@ export default function Login() {
     const data = new FormData(event.currentTarget);
     if(data.get('email').trim() && data.get('password').trim()){
         if(data.get('email').includes('@gmail.com')){
-            console.log({
-              email: data.get('email'),
-              password: data.get('password'),
-            });
+           let email=data.get('email'),password=data.get('password');
+           axios.post('/login',{email,password}).then((response)=>{
+            if(!response.data.err){
+              dispatch({type:'refresh'})
+              navigate('/')
+            }else{
+              seterr(response.data.message)
+            }
+           }).catch((error)=>{
+            console.log(error);
+           })
         }else{
             seterr('Invalid email format')
         }

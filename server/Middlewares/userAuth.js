@@ -6,6 +6,7 @@ export const verifyUser = async (req, res, next) => {
       try {
         const verifyJwt = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const userID = verifyJwt.id;
+        console.log("####",verifyJwt.role);
         const user = await userModel.findOne({ _id: userID });
         
         if(user){

@@ -11,7 +11,7 @@ const app = express();
 dbconnect()
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: ['http://localhost:3000','https://urlencrypto.netlify.app'],
   credentials: true,
 }));
 

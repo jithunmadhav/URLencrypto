@@ -139,7 +139,7 @@ function Home() {
               <div className='card'>
                 <div style={{ width:'90%' }}>
                 <p className='para'>{item.title}</p>
-                <p className='para'>{item.shorturl}</p>
+                <a href={item.shorturl}>{item.shorturl}</a>
                 <p className='para'>Created at {new Date(item.createdDate).toLocaleDateString()}</p>
                 </div>
                 <div style={{ width:'10%',paddingTop:'10px', cursor:'pointer' }}>

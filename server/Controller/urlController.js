@@ -16,7 +16,8 @@ export const urlshorten=async(req,res)=>{
 export const getUrl=async(req,res)=>{
     try {
         const id=req.query.id;
-        const result=  await urlModel.find({userId:id}).lean()
+        const result=  await urlModel.find({userId:id}).sort({ createdDate: -1 }).lean()
+        console.log(result);
         if(result){
             res.status(200).json({err:false,result})
         }else{

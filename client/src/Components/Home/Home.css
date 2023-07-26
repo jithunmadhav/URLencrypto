@@ -53,5 +53,26 @@
     margin-top: 70px;
     width: 50%;
     height: 500px;
-    background-color: aqua;
+    background-color: #b9c5c538;
+    border-radius: 9px;
+    margin-right: 21px;
+    overflow: auto;
+}
+.sub-div2::-webkit-scrollbar {
+    display: none;
+}
+.card{
+    width: 90%;
+    margin-left: 27px;
+    margin-top: 19px;
+    height: 138px;
+    background-color: #d6dae5ad;
+    border-radius: 6px;
+    font-family: monospace;
+    display: flex;
+
+}
+.para{
+    color: black;
+    padding-left: 10px;
 }

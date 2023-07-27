@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 export const urlshorten=async(req,res)=>{
     try {
         const {title,longurl,userId}=req.body;
-        const shorturl=`https://url-9uyl.onrender.com/url/${nanoid(5)}`
+        const shorturl=`https:/urlencrypto.netlify.app/${nanoid(5)}`
         await urlModel.create({title,longurl,userId,shorturl})
         res.status(200).json({err:false})
     } catch (error) {

@@ -4,7 +4,8 @@ import { nanoid } from "nanoid";
 export const urlshorten=async(req,res)=>{
     try {
         const {title,longurl,userId}=req.body;
-        const shorturl=`https:/urlencrypto.netlify.app/${nanoid(5)}`
+        const shorturl=`https://urlencrypto.netlify.app/${nanoid(5)}`
+        // const shorturl=`http://localhost:3000/${nanoid(5)}`
         await urlModel.create({title,longurl,userId,shorturl})
         res.status(200).json({err:false})
     } catch (error) {
@@ -44,9 +45,11 @@ export const viewUrl=async(req,res)=>{
     console.log(req.params.id);
     try {
         const id=req.params.id;
-        const shorturl=`https:/urlencrypto.netlify.app/${id}`
+        const shorturl=`https://urlencrypto.netlify.app/${id}`
+        // const shorturl=`http://localhost:3000/${id}`
         const result=await urlModel.findOne({shorturl:shorturl})
-        res.redirect(result.longurl)
+        const longurl=result.longurl;
+        res.json({err:false,longurl})
     } catch (error) {
         console.log(error);
     }

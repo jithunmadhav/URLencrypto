@@ -4,9 +4,12 @@ import { useParams } from 'react-router-dom'
 
 function Viewurl() {
     let {id}=useParams()
-    console.log(id,"******");
     useEffect(() => {
-        axios.get(`/url/${id}`)
+        axios.get(`/url/${id}`).then((response)=>{
+        window.location.href=response.data.longurl
+        }).catch((error)=>{
+            console.log(error);
+        })
     }, [])
   return (
     <div>

@@ -8,6 +8,7 @@ import Home from './Components/Home/Home';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from './axios';
+import Viewurl from './Components/Viewurl/Viewurl';
 function App() {
   const {user,refresh} = useSelector(state => state)
   axios.defaults.withCredentials = true;
@@ -39,7 +40,8 @@ const dispatch = useDispatch()
               <Route path='/login' element={<Navigate to={'/'}/>} /> 
               <Route path='/signup' element={<Navigate to={'/'}/>} />
               <Route path='/forgotpassword' element={<Navigate to={'/'}/>} />
-              <Route path='/resetpassword' element={<Navigate to={'/'}/>}/>     
+              <Route path='/resetpassword' element={<Navigate to={'/'}/>}/>  
+              <Route path='/:id' element={<Viewurl/>}/>   
                <Route path='/' element={<Home/>}/>
             </>
           )}

@@ -44,7 +44,7 @@ export const viewUrl=async(req,res)=>{
     console.log(req.params.id);
     try {
         const id=req.params.id;
-        const shorturl=`https://url-9uyl.onrender.com/url/${id}`
+        const shorturl=`https:/urlencrypto.netlify.app/${id}`
         const result=await urlModel.findOne({shorturl:shorturl})
         res.redirect(result.longurl)
     } catch (error) {

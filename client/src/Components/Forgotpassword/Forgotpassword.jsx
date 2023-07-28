@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../axios';
+import Otpverification from '../Otpverification/Otpverification';
 
 
 
@@ -21,16 +23,27 @@ const defaultTheme = createTheme();
 
 export default function ForgotPassword() {
   const [err, seterr] = React.useState('')
+  const [openOtp, setopenOtp] = React.useState(false)
+  const [data, setdata] = React.useState('')
+
+
   const navigate=useNavigate()
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     if(data.get('email').trim()){
-        if(data.get('email').includes('@gmail.com')){
-            console.log({
-              email: data.get('email'),
-              password: data.get('password'),
-            });
+      if(data.get('email').includes('@gmail.com')){
+        let Data={
+          email:data.get('email'),
+          type:'forgot'
+        }
+        setdata(Data)
+        let email=data.get('email')
+          axios.post('/forgotPassword',{email}).then((response)=>{
+            if(!response.data.err){
+              setopenOtp(true)
+            }
+          })
         }else{
             seterr('Invalid email format')
         }
@@ -43,6 +56,7 @@ export default function ForgotPassword() {
   }
 
   return (
+    openOtp ? <Otpverification data={{data}} /> :
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

@@ -83,7 +83,7 @@ export const resendOtp=(req,res)=>{
 
             },
             process.env.JWT_SECRET_KEY);
-            return res.cookie("signupToken", userToken, {
+            return res.cookie("resetToken", userToken, {
                 httpOnly: true,
                 secure: true,
                 maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -130,8 +130,8 @@ export const VerifyResetOtp=async(req,res)=>{
 
 export const resetpassword=async(req,res)=>{
     console.log(req.body);
-    const {email,newPassword}=req.body;
-    let bcrypPassword=await bcrypt.hash(newPassword,10)
+    const {email,password}=req.body;
+    let bcrypPassword=await bcrypt.hash(password,10)
     await userModel.updateOne({email:email},{$set:{
         password:bcrypPassword
     }}).then((result)=>{

@@ -14,6 +14,7 @@ import { useState } from 'react';
 import './Otpverification.css';
 import axios from '../../axios';
 import { useDispatch } from 'react-redux';
+import Passwordreset from '../PasswordReset/Passwordreset';
 
 
 
@@ -27,6 +28,7 @@ export default function Otpverification(props) {
       const [OTP, setOTP] = React.useState('');
       const [timer, setTimer] = useState(60);
       const [resendAttempts, setResendAttempts] = useState(0);
+      const [openReset, setopenReset] = useState(false)
   const [err, seterr] = React.useState('')
   const navigate=useNavigate()
   const handleSubmit = (event) => {
@@ -42,7 +44,13 @@ export default function Otpverification(props) {
           }
         })
       }else{
-
+        axios.post('/verifyResetOtp',{OTP,...props.data.data}).then((response)=>{
+          if(!response.data.err){
+            setopenReset(true)
+          }else{
+            seterr(response.data.message)
+          }
+        })
       }
     }else{
         seterr('otp is required')
@@ -66,13 +74,14 @@ export default function Otpverification(props) {
     if (resendAttempts < 3) {
       setResendAttempts((prevAttempts) => prevAttempts + 1);
       setTimer(60);
-    //   axios.post('/user/resendOtp', { ...props.data }).then((response) => {
-    //     console.log(response.data);
-    //   });
+      axios.post('/resendOtp', { ...props.data.data }).then((response) => {
+        console.log(response.data);
+      });
     }
   };
 
   return (
+    openReset ? <Passwordreset data={{...props.data.data}} /> :
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

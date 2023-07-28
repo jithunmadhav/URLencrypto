@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../axios';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -18,17 +20,22 @@ import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
-export default function Passwordreset() {
+export default function Passwordreset(props) {
   const [err, seterr] = React.useState('')
+  const dispatch = useDispatch()
+  const navigate=useNavigate()
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     if(data.get('password').trim() && data.get('confirmpassword').trim()){
         if(data.get('password')===data.get('confirmpassword')){
-            console.log({
-              email: data.get('password'),
-              password: data.get('confirmpassword'),
-            });
+            let email=props.data.email,password=data.get('password');
+            axios.post('/resetPassword',{email,password}).then((response)=>{
+              if(!response.data.err){
+                dispatch({type:'refresh'})
+                navigate('/login')
+              }
+            })
         }else{
             seterr('Password are not same')
         }

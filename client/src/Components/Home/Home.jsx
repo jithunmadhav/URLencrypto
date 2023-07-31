@@ -16,7 +16,7 @@ function Home() {
   const formRef = React.useRef(null);
   const dispatch = useDispatch()
   const notify = (err) => toast(err);
-
+  const [err, seterr] = React.useState('')
   React.useEffect(() => {
    let id=user.details._id;
     axios.get('/viewurl',{params:{id}}).then((response)=>{
@@ -60,15 +60,22 @@ function Home() {
     event.preventDefault()
     const data = new FormData(event.currentTarget);
     if(data.get('title').trim() && data.get('longurl').trim()){
-      let title=data.get('title'),longurl=data.get('longurl'), userId=user.details._id;
-     axios.post('/urlshorten',{title,longurl,userId}).then((response)=>{
-      if(!response.data.err){
-        formRef.current.reset();
-        setrefresh(!refresh)
+      if( data.get('longurl').includes('http')){
+        let title=data.get('title'),longurl=data.get('longurl'), userId=user.details._id;
+       axios.post('/urlshorten',{title,longurl,userId}).then((response)=>{
+        if(!response.data.err){
+          formRef.current.reset();
+          setrefresh(!refresh)
+          seterr('')
+        }
+      }).catch((error)=>{
+        console.log(error);
+       })
+      }else{
+        seterr('url is not valid')
       }
-    }).catch((error)=>{
-      console.log(error);
-     })
+    }else{
+      seterr('All fields required')
     }
   }
   const handleCopyUrl = (url) => {
@@ -104,6 +111,7 @@ function Home() {
      </svg>
         }
        <div className='sub-div1'>
+        <p  style={{ height:'30px', color:'red' , fontFamily:'monospace', fontSize:'18px' }}>{err}</p>
        <Box component="form" ref={formRef}  onSubmit={handlesubmit} noValidate>
             <TextField
               margin="normal"

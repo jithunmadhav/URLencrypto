@@ -31,7 +31,6 @@ export const getUrl=async(req,res)=>{
 export const deleteUrl=async(req,res)=>{
   try {
     const id=req.params.id;
-    console.log(id);
      urlModel.deleteOne({_id:id}).then((response)=>{
         console.log(response);
      })
@@ -42,7 +41,6 @@ export const deleteUrl=async(req,res)=>{
 }
 
 export const viewUrl=async(req,res)=>{
-    console.log(req.params.id);
     try {
         const id=req.params.id;
         const shorturl=`https://urlencrypto.netlify.app/${id}`

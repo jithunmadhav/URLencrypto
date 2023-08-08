@@ -52,7 +52,6 @@ export default function Signup() {
                 axios.post('/signup',{email,name,password,confirmpassword}).then((response)=>{
               if(!response.data.err){
                 setOpenOtp(true)
-                console.log(response.data);
               }else{
                 seterr(response.data.message)
               }
